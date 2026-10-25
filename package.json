@@ -1,0 +1,11 @@
+{
+  "name": "bikefit",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "BikeFit - réglage de selle par caméra (PWA)",
+  "scripts": {
+    "test": "node test/analysis.test.js",
+    "start": "npx --yes serve -l 8080 ."
+  }
+}
