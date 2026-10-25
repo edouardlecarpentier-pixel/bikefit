@@ -11,79 +11,115 @@
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
-<header><h1>BikeFit</h1><span id="status" class="muted">Prêt</span></header>
+<header>
+  <h1>BikeFit</h1>
+  <span id="status" class="muted"></span>
+  <button id="btnHisto" class="small-btn">Historique</button>
+</header>
+<div id="stepper" aria-label="Étapes"><i></i><i></i><i></i><i></i></div>
 
 <main>
-  <!-- MESURE -->
-  <section id="tab-mesure" class="tab active">
-    <div class="stage">
-      <video id="video" playsinline muted></video>
-      <canvas id="overlay"></canvas>
-      <div id="hint" class="hint">Pose le téléphone de profil, à hauteur de hanche, côté pédalier. Filme-toi en train de pédaler.</div>
-    </div>
-    <div class="row">
-      <button id="btnCam" class="primary">Démarrer la caméra</button>
-      <button id="btnFlip" title="Changer de caméra">⟲</button>
-      <label class="btn">Vidéo<input id="fileIn" type="file" accept="video/*" hidden></label>
-    </div>
-    <div id="verdict" class="verdict none">En attente de pédalage…</div>
-    <div class="grid">
-      <div class="metric"><span>Genou (point bas)</span><b id="mKnee">–</b></div>
-      <div class="metric"><span>Flexion</span><b id="mFlex">–</b></div>
-      <div class="metric"><span>Ajustement</span><b id="mDelta">–</b></div>
-      <div class="metric"><span>Cycles</span><b id="mCycles">0</b></div>
-      <div class="metric"><span>Hanche</span><b id="mHip">–</b></div>
-      <div class="metric"><span>Dos</span><b id="mBack">–</b></div>
-      <div class="metric"><span>Coude</span><b id="mElbow">–</b></div>
-      <div class="metric"><span>Côté</span>
-        <select id="side"><option value="auto">Auto</option><option value="right">Droit</option><option value="left">Gauche</option></select></div>
-    </div>
-    <div class="row">
-      <input id="saddleNow" type="number" inputmode="numeric" placeholder="Hauteur de selle actuelle (mm)">
-      <button id="btnSave" class="primary">Enregistrer</button>
-    </div>
-    <p class="muted small">Ajustement = variation de hauteur de selle estimée (+ monter, − descendre) pour viser 30° de flexion au point bas. Estimation basée sur ton entrejambe : renseigne-le dans Profil.</p>
+  <!-- ÉTAPE 1 -->
+  <section class="step active" id="s1">
+    <h2>1 · Toi et ton vélo</h2>
+    <p class="muted">Quelques infos pour calculer des valeurs en mm. Tout reste sur ton téléphone.</p>
+    <label>Entrejambe (cm) <small>mesuré pieds nus, livre entre les jambes</small>
+      <input id="pInseam" type="number" inputmode="decimal" placeholder="ex. 80"></label>
+    <label>Hauteur de selle actuelle (mm) <small>axe de pédalier → dessus de selle, le long du tube de selle</small>
+      <input id="saddleNow" type="number" inputmode="numeric" placeholder="ex. 705"></label>
+    <div class="card" id="startCard" hidden><span>Point de départ conseillé (LeMond)</span><b id="rLemond">–</b></div>
+    <details><summary>Autres infos (facultatif)</summary>
+      <label>Vélo<input id="pBike" type="text" value="Specialized Creo 2"></label>
+      <label>Taille du cadre<input id="pSize" type="text" placeholder="ex. 56"></label>
+      <label>Longueur de manivelle (mm)<input id="pCrank" type="number" inputmode="numeric" value="170"></label>
+    </details>
+    <button id="next1" class="primary big">Commencer la mesure</button>
+    <button id="btnInstall" class="big" hidden>Installer l'appli sur le téléphone</button>
   </section>
 
-  <!-- CALCULETTE -->
-  <section id="tab-calc" class="tab">
-    <h2>Hauteur de selle théorique</h2>
-    <label>Entrejambe (cm)<input id="inseamCalc" type="number" inputmode="decimal" placeholder="ex. 80"></label>
-    <div class="card"><span>LeMond (axe pédalier → dessus de selle)</span><b id="rLemond">–</b></div>
-    <div class="card"><span>Hamley (axe pédale → dessus de selle)</span><b id="rHamley">–</b></div>
-    <p class="muted small">Valeurs de départ. Le réglage final se fait avec la mesure de l'angle du genou. Cotes de ton Specialized Creo 2 : note-les dans l'historique à chaque réglage.</p>
+  <!-- ÉTAPE 2 -->
+  <section class="step" id="s2">
+    <h2>2 · Hauteur de selle</h2>
+    <div class="intro" id="intro2">
+      <ol class="how">
+        <li>Pose le téléphone <b>de profil</b>, à hauteur de hanche, côté pédalier, à 2–3 m.</li>
+        <li>Monte sur le vélo (home trainer), tenue ajustée, corps entier visible.</li>
+        <li>Pédale tranquillement, <b>en position normale</b>, pendant ~15 s.</li>
+      </ol>
+      <button id="start2" class="primary big">Démarrer la caméra</button>
+      <label class="btn big">Importer une vidéo<input id="file2" type="file" accept="video/*" hidden></label>
+    </div>
+    <div class="live" id="live2" hidden>
+      <div class="slot" id="slot2"></div>
+      <div class="bar"><div id="bar2"></div></div>
+      <p class="muted center" id="msg2">Pédale…</p>
+      <div id="verdict" class="verdict none">En attente de pédalage…</div>
+      <button id="val2" class="primary big" disabled>Valider cette mesure</button>
+    </div>
+    <button class="link back" data-go="1">← Retour</button>
+  </section>
+
+  <!-- ÉTAPE 3 -->
+  <section class="step" id="s3">
+    <h2>3 · Haut du corps</h2>
+    <div class="intro" id="intro3">
+      <ol class="how">
+        <li>Garde le même placement de la caméra.</li>
+        <li>Mains sur les cocottes, position habituelle.</li>
+        <li>Pédale ~6 s : l'appli mesure hanche, dos et coudes.</li>
+      </ol>
+      <button id="start3" class="primary big">Démarrer la caméra</button>
+      <button id="skip3" class="big">Passer cette étape</button>
+    </div>
+    <div class="live" id="live3" hidden>
+      <div class="slot" id="slot3"></div>
+      <div class="bar"><div id="bar3"></div></div>
+      <p class="muted center" id="msg3">Pédale…</p>
+      <div class="grid3">
+        <div class="metric"><span>Hanche</span><b id="mHip">–</b></div>
+        <div class="metric"><span>Dos</span><b id="mBack">–</b></div>
+        <div class="metric"><span>Coude</span><b id="mElbow">–</b></div>
+      </div>
+      <button id="val3" class="primary big" disabled>Valider</button>
+    </div>
+    <button class="link back" data-go="2">← Retour</button>
+  </section>
+
+  <!-- ÉTAPE 4 -->
+  <section class="step" id="s4">
+    <h2>4 · Bilan</h2>
+    <div id="report"></div>
+    <button id="save4" class="primary big">Enregistrer le bilan</button>
+    <button id="copy4" class="big">Copier le bilan</button>
+    <button id="redo4" class="big">Refaire la mesure (après réglage)</button>
+    <button class="link back" data-go="3">← Retour</button>
   </section>
 
   <!-- HISTORIQUE -->
-  <section id="tab-histo" class="tab">
+  <section class="step" id="sH">
     <h2>Historique</h2>
     <div id="histo"></div>
     <div class="row">
-      <button id="btnExport">Exporter (JSON)</button>
+      <button id="btnExport">Exporter</button>
       <label class="btn">Importer<input id="importIn" type="file" accept="application/json" hidden></label>
       <button id="btnClear" class="danger">Tout effacer</button>
     </div>
-  </section>
-
-  <!-- PROFIL -->
-  <section id="tab-profil" class="tab">
-    <h2>Profil &amp; vélo</h2>
-    <label>Entrejambe (cm)<input id="pInseam" type="number" inputmode="decimal" placeholder="ex. 80"></label>
-    <label>Vélo<input id="pBike" type="text" value="Specialized Creo 2"></label>
-    <label>Taille du cadre<input id="pSize" type="text" placeholder="ex. 56"></label>
-    <label>Longueur de manivelle (mm)<input id="pCrank" type="number" inputmode="numeric" value="170"></label>
-    <button id="btnInstall" class="primary" hidden>Installer l'appli</button>
-    <p class="muted small">Sur iPhone : Partager → « Sur l'écran d'accueil ». Sur Android : menu ⋮ → « Installer l'application ».</p>
-    <p class="muted small">Tes données restent sur ce téléphone (aucun envoi). Utilise Exporter pour les sauvegarder.</p>
+    <button id="closeH" class="big">← Retour à la mesure</button>
   </section>
 </main>
 
-<nav>
-  <button data-tab="mesure" class="active">Mesure</button>
-  <button data-tab="calc">Calcul</button>
-  <button data-tab="histo">Historique</button>
-  <button data-tab="profil">Profil</button>
-</nav>
+<!-- Caméra partagée : déplacée dans l'étape active -->
+<div id="cam" hidden>
+  <div class="stage">
+    <video id="video" playsinline muted></video>
+    <canvas id="overlay"></canvas>
+  </div>
+  <div class="row">
+    <button id="btnFlip">⟲ Autre caméra</button>
+    <select id="side"><option value="auto">Côté : auto</option><option value="right">Côté droit</option><option value="left">Côté gauche</option></select>
+    <button id="btnStop">Arrêter</button>
+  </div>
+</div>
 
 <script type="module" src="app.js"></script>
 </body>

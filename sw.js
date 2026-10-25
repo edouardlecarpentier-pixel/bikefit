@@ -1,5 +1,5 @@
 // Service worker : appli utilisable hors ligne après la première ouverture.
-const CACHE = 'bikefit-v1';
+const CACHE = 'bikefit-v2';
 const SHELL = ['./', 'index.html', 'app.js', 'analysis.js', 'style.css', 'manifest.json', 'icon.svg', 'icon-192.png', 'icon-512.png'];
 
 self.addEventListener('install', (e) => {

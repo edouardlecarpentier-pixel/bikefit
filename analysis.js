@@ -51,6 +51,24 @@ export function detectBottoms(samples, { minGap = 0.35, window = 0.18, minRange 
     .filter(Boolean);
 }
 
+export function spread(arr) {
+  const a = arr.filter(Number.isFinite);
+  return a.length ? Math.max(...a) - Math.min(...a) : NaN;
+}
+
+export function percentile(arr, p) {
+  const a = arr.filter(Number.isFinite).sort((x, y) => x - y);
+  if (!a.length) return NaN;
+  return a[Math.min(a.length - 1, Math.max(0, Math.round((p / 100) * (a.length - 1))))];
+}
+
+// Plages indicatives (route endurance). Renvoie 'ok' | 'low' | 'high' | 'none'.
+export const RANGES = { back: [35, 55], elbow: [145, 170], hip: [40, 80] };
+export function rate(value, [lo, hi]) {
+  if (!Number.isFinite(value)) return 'none';
+  return value < lo ? 'low' : value > hi ? 'high' : 'ok';
+}
+
 export function verdict(kneeInterior) {
   if (!Number.isFinite(kneeInterior)) return { code: 'none', flexion: NaN, text: 'En attente de pédalage…' };
   const flexion = 180 - kneeInterior;
